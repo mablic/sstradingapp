@@ -1,0 +1,8 @@
+{
+    "MONGODB_CONNECTION": "mongodb+srv://mhe:V7HRqy7Ge1T6KvdM@cluster0.yvffm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+    "EMAIL_ACCOUNT": "maihe88@gmail.com",
+    "EMAIL_PASSWORD": "fewdfncsrysimtbv",
+    "GETTER_EMAIL_ACCOUNT": "maihe88@gmail.com",
+    "POLYGON_KEY" : "3wV6p7_TRSpmKQT1A638F4zDSf7R60Fp",
+    "WIKI_PATH": "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
+}

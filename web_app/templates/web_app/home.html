@@ -1,0 +1,19 @@
+{% extends 'web_app/base.html' %}
+{% block content %}
+    <div class="card text-center">
+        <div class="card-body">
+            <h5 class="card-title" >Algorithm Trading Model</h5>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"></li>
+                <li class="list-group-item">Selection of the S&P 500 Tickers</li>
+                <li class="list-group-item">Picture the Ticker with Date Range or Chart Type</li>
+                <li class="list-group-item">(Not Ready)Base Moving Average Stratgy Trading Model</li>
+                <li class="list-group-item">(Not Ready) VaR measurement</li>
+                <li class="list-group-item">(Not Ready) Monte Carlo Simulation</li>
+                <li class="list-group-item"></li>
+            </ul>
+            <a href="{% url 'main:web_app_trade_model' %}" class="btn btn-primary">See The Model</a>
+        </div>
+    </div>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+{% endblock content %}

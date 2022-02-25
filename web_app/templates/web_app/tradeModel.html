@@ -1,0 +1,109 @@
+{% extends 'web_app/base.html' %}
+{% load static %}
+{% block content %}
+
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <label class="input-group-text" for="TickerListInput">Ticker</label>
+        </div>
+        <select class="custom-select" id="TickerListInput">
+            <option selected>Choose...</option>
+            {% for t in ticker %}
+                <option>{{ t }}</option>
+            {% endfor %}
+        </select>
+        &emsp;
+        <button data-toggle="collapse" href="#collapseExample" class="btn btn-primary">Optional</button>
+        &emsp;
+        <button onclick="search_ticker()" class="btn btn-primary">Search</button>
+    </div>
+
+    <!-- Input for the optional items -->
+    <div class="collapse" id="collapseExample">
+        <div class="card card-body">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Start Date</span>
+                </div>
+                <input type="date" class="form-control" id="startDateInput" aria-describedby="basic-addon1">
+                &emsp;&emsp;
+                <div class="input-group-prepend">
+                    <span class="input-group-text">End Date</span>
+                </div>
+                <input type="date" class="form-control" id="endDateInput" aria-describedby="basic-addon1">
+            </div>
+        </div>
+
+        <!-- this is for the chart type selection -->
+        <label class="input-group-text" for="TickerListInput">Chart Type</label>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+            <label class="form-check-label" for="inlineRadio1">candle</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+            <label class="form-check-label" for="inlineRadio2">line</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3">
+            <label class="form-check-label" for="inlineRadio3">renko</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4" value="option4">
+            <label class="form-check-label" for="inlineRadio3">pnf</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio5" value="option5">
+            <label class="form-check-label" for="inlineRadio3">ohlc</label>
+        </div>
+    </div>
+
+    <!-- Images presentation -->
+    <div>
+        <img src="{% static 'images/pic.png' %}" id="TickerPicture" alt="">
+    </div>
+    <script>
+        function search_ticker(ret){
+            // var ticker = document.getElementById("TickerListInput").value
+            var chartType = '';
+            var startDate = '';
+            var endDate = '';
+            var ticker = $('#TickerListInput option:selected').val();
+            var startDate = document.getElementById("startDateInput").value;
+            var endDate = document.getElementById("endDateInput").value;
+
+            var imge = "{% static 'images/pic.png' %}";
+            console.log(imge);
+
+            if (document.getElementById("inlineRadio1").checked){
+                chartType = 'candle';
+            }
+            if(document.getElementById("inlineRadio2").checked){
+                chartType = 'line';
+            }
+            if(document.getElementById("inlineRadio3").checked){
+                chartType = 'renko';
+            }
+            if(document.getElementById("inlineRadio4").checked){
+                chartType = 'pnf';
+            }
+            if(document.getElementById("inlineRadio5").checked){
+                chartType = 'ohlc';
+            }
+            // console.log('ticker='+ticker+'startDate='+startDate+'endDate='+endDate+'charType='+charType)
+            // console.log(ticker)
+            $.ajax({
+                type: 'post',
+                headers: { "X-CSRFToken": '{{csrf_token}}' },
+                data: {'ticker': ticker, 'startDate': startDate, 'endDate': endDate, 'chartType': chartType},
+            }).done(function(result) {
+                reloading()
+            });
+        };
+        function reloading(){
+            window.setTimeout( 1000 );
+            location.reload();
+            // console.log('reload!')
+        }
+    </script>
+{% endblock content %}
