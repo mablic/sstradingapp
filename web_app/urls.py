@@ -11,7 +11,7 @@ urlpatterns = [
     path('about/', views.about, name='web_app_about'),
     path('message/', views.message, name='web_app_message'),
     path('trade_model/', views.tradeModel, name='web_app_trade_model'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
 
 # if settings.DEBUG:
 #     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
