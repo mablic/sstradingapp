@@ -12,11 +12,11 @@ class Email:
         return cls.__instance
     
     def __init__(self) -> None:
-        f = open(os.getcwd() + '/web_app/config/config.json')
-        jsonData = json.load(f)
-        self.senderEmail = jsonData['EMAIL_ACCOUNT']
-        self.senderPW = jsonData['EMAIL_PASSWORD']
-        self.getterEmail = jsonData['GETTER_EMAIL_ACCOUNT']
+        # f = open(os.getcwd() + '/web_app/config/config.json')
+        # jsonData = json.load(f)
+        self.senderEmail = os.environ.get('EMAIL_ACCOUNT')
+        self.senderPW = os.environ.get('EMAIL_PASSWORD')
+        self.getterEmail = os.environ.get('EMAIL_ACCOUNT')
 
     def send_email(self, userName, subj, fromEmail, body):
 

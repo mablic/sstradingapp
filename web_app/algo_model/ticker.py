@@ -15,10 +15,11 @@ from datetime import datetime, timedelta
 class Ticker:
 
     def __init__(self, ticker) -> None:
-        f = open(os.getcwd() + '/web_app/config/config.json')
+        # f = open(os.getcwd() + '/web_app/config/config.json')
         # f = open(os.getcwd() + '/web_app/algo_model/config/config.json')
-        jsonData = json.load(f)
-        self.configKey = jsonData['POLYGON_KEY']
+        # jsonData = json.load(f)
+        # self.configKey = jsonData['POLYGON_KEY']
+        self.configKey = os.environ.get('POLYGON_KEY')
         self.__name = ticker
         self.__data = None
         self.__startDate = '1990-01-01'

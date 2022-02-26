@@ -26,9 +26,10 @@ class MongoDB:
         self.collection = None
 
     def connect_to_db(self):
-        f = open(os.getcwd() + '/web_app/config/config.json')
-        jsonData = json.load(f)
-        connectionString = jsonData['MONGODB_CONNECTION']
+        # f = open(os.getcwd() + '/web_app/config/config.json')
+        # jsonData = json.load(f)
+        # connectionString = jsonData['MONGODB_CONNECTION']
+        connectionString = os.environ.get('MONGODB_CONNECTION')
         cluster = MongoClient(connectionString, tlsCAFile=certifi.where())
 
         db = cluster['algoDB']

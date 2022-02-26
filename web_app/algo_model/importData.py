@@ -14,10 +14,10 @@ class Data():
 
     def __init__(self) -> None:
         self.__tickerDict = {}
-        f = open(os.getcwd() + '/web_app/config/config.json')
-        # f = open(os.getcwd() + '/web_app/algo_model/config/config.json')
-        jsonData = json.load(f)
-        self.wikiPath = jsonData['WIKI_PATH']
+        # f = open(os.getcwd() + '/web_app/config/config.json')
+        # # f = open(os.getcwd() + '/web_app/algo_model/config/config.json')
+        # jsonData = json.load(f)
+        self.wikiPath = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
     
     # this is the function to read data from the wikipedia.
     def read_wiki(self):
