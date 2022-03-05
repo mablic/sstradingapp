@@ -23,7 +23,7 @@ def message(request):
 
     return render(request, 'web_app/message.html')
 
-# trademodel get the VaR calculation, graph the model as well as percentage of the model into the page
+# trademodel get the VaR calculation, graph the model as well as percentage of the model into the
 def tradeModel(request):
     if request.method == 'GET':
         ticker = MODEL.get_all_ticker_from_db()

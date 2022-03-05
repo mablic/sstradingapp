@@ -1,10 +1,4 @@
-from ast import Mod
-from tracemalloc import start
-from turtle import position
-from django.db import models
-
 from web_app.algo_model import riskModel, ticker
-
 from .algo_model import *
 from .mongoDB import mongoDB
 from .message import message
