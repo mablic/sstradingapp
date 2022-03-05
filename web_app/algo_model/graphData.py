@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from lib2to3.pgen2.pgen import DFAState
-from matplotlib import ticker
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import pandas as pd
 import os
 import mplfinance as mpf
