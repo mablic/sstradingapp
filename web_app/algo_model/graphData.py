@@ -9,7 +9,6 @@ import pandas as pd
 import os
 import mplfinance as mpf
 from datetime import datetime
-import matplotlib.pyplot as plt
 from .ticker import Ticker
 from .strategyModel import MovingAverageStrategy
 
