@@ -41,7 +41,7 @@ class Ticker:
                 raise "Invalid data range, can't load data more than 2 years."
             # f = open(os.getcwd() + '/model/data/AAPL.json')
             # data = json.load(data)
-            # print(data)
+            # print(data['results'])
             df = pandas.DataFrame(data['results'])
             df = df[['t','o','h','l','c','v','vw','n']]
             df.rename(columns={'t': 'Date','o': 'Open','h': 'High','l': 'Low','c': 'Close','v': 'Volume'}, inplace=True)
@@ -95,6 +95,9 @@ class Ticker:
     
     def get_end_date(self):
         return self.__endDate
+
+    def get_last_close_data(self):
+        return self.__data.loc[self.__data.index[-1], "Close"]
 
     def get_data(self):
         return self.__data

@@ -16,6 +16,8 @@
         <button data-toggle="collapse" href="#collapseExample" class="btn btn-primary">Optional</button>
         &emsp;
         <button onclick="search_ticker()" class="btn btn-primary">Search</button>
+        &emsp;
+        <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Value at Risk</button>
     </div>
 
     <!-- Input for the optional items -->
@@ -35,7 +37,7 @@
         </div>
 
         <!-- this is for the chart type selection -->
-        <label class="input-group-text" for="TickerListInput">Chart Type</label>
+        <label class="input-group-text">Chart Type</label>
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
             <label class="form-check-label" for="inlineRadio1">candle</label>
@@ -62,9 +64,91 @@
     <div>
         <img src="{% static 'images/pic.png' %}" id="TickerPicture" alt="">
     </div>
+
+
+    <!-- This is the VaR calculation presentation -->
+    <div class="offcanvas offcanvas-end" tabindex="0" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+        <div class="offcanvas-header shadow-none p-3 mb-5 bg-light rounded">
+            <h5 id="offcanvasRightLabel">Value at Risk Calculator</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="row align-items-start shadow-sm p-3 mb-5 bg-body rounded">
+                <div class="input-group">
+                    <div class="col">
+                        <span class="input-group-text">Start Date</span>
+                    </div>
+                    <div class="col">
+                        <input type="date" class="form-control" id="varStartDateInput" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <div class="col">
+                        <span class="input-group-text">End Date</span>
+                    </div>
+                    <div class="col">
+                        <input type="date" class="form-control" id="varEndDateInput" aria-describedby="basic-addon1">
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="insert_position()" class="btn btn-primary">Add Position</button>
+            <button onclick="get_var_value()" class="btn btn-primary">Get Value at Risk</button>
+            <table>
+                <div class="row align-items-start shadow-sm p-3 mb-5 bg-body rounded">
+                    <div class="col">
+                    Your Ticker
+                    </div>
+                    <div class="col">
+                    Your Shares
+                    </div>
+                    <div class="w-100 d-none d-md-block"></div>
+                    <div id="VaRTableControl">
+                        <div class="input-group" id="VaRTable">
+                            <select class="var-select-0">
+                                <option selected>Choose...</option>
+                                {% for t in ticker %}
+                                    <option>{{ t }}</option>
+                                {% endfor %}
+                            </select>
+                            <input type="text" aria-label="Last name" class="form-control">
+                            <button type="button" id="DeleteNA" onclick="remove_var_row(this.id)">X</button>
+                        </div>
+                    </div>          
+                    
+                    <!-- VaR presentation table -->
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="Confidence Level">Confidence Level</th>
+                                <th scope="Value at Risk">Value at Risk</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>95%</td>
+                                <td id="cl1">NA</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">2</th>
+                                <td>99%</td>
+                                <td id="cl2">NA</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </table>
+            <div class="container">
+                <p class="fs-10 fst-italic">* one day value at risk calculator with simple return of the closing prices.<a href="https://www.investopedia.com/terms/v/var.asp" target="_blank">More</a></p>
+            </div>
+        </div>
+    </div>
+
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <script>
-        function search_ticker(ret){
-            // var ticker = document.getElementById("TickerListInput").value
+        function search_ticker(ret){// var ticker = document.getElementById("TickerListInput").value
             var chartType = '';
             var startDate = '';
             var endDate = '';
@@ -100,10 +184,49 @@
                 reloading()
             });
         };
+        function get_var_value(){
+            var inputTree = $("#VaRTableControl input");
+            var selectTree = $("#VaRTableControl option:selected");
+            var startDate = document.getElementById("varStartDateInput").value;
+            var endDate = document.getElementById("varEndDateInput").value;
+            inputArray = [];
+            selectArray = [];
+
+            for (var i=0; i<inputTree.length;i++){
+                inputArray.push(inputTree[i].value);
+                selectArray.push(selectTree[i].text)
+                // console.log(inputArray[i])
+                // console.log(selectArray[i])
+            }
+            $.ajax({
+                type: 'post',
+                headers: { "X-CSRFToken": '{{csrf_token}}' },
+                data: {'positions[]': inputArray, 'tickers[]': selectArray, 'startDate': startDate, 'endDate': endDate},
+            }).done(function(result) {
+            //    console.log(result['varList'])
+               $("#cl1")[0].innerText = result['varList'][0];
+               $("#cl2")[0].innerText = result['varList'][1];
+            });
+        };
+        function insert_position(){
+            // $("#VaRTable").clone().insertAfter("div.input-group:last");
+            var varCount = $('#VaRTableControl>div').length;
+            var $elem = $("#VaRTable").data( "arr", [ 1 ] ),
+            $clone = $elem.clone( true )
+            $clone[0].id = "VaRTable-" + String(varCount)
+            var bn = $clone.find("button");
+            bn[0].id = "Delete-" + String(varCount)
+            $clone.insertAfter("div.input-group:last")
+        };
+        function remove_var_row(id){
+            var removeId = id.replace("Delete", "VaRTable");
+            var elem = $("#" + removeId);
+            elem.remove()
+        }
         function reloading(){
             window.setTimeout( 1000 );
             location.reload();
             // console.log('reload!')
-        }
+        };
     </script>
 {% endblock content %}
