@@ -1,0 +1,99 @@
+{% extends 'web_app/base.html' %}
+{% block content %}
+
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+        <label class="input-group-text" for="TickerListInput">Ticker</label>
+    </div>
+    <select class="custom-select" id="TickerListInput">
+        <option selected>Choose...</option>
+        {% for t in ticker %}
+            <option>{{ t }}</option>
+        {% endfor %}
+    </select>
+    &emsp;&emsp;
+    <div class="input-group-prepend">
+        <span class="input-group-text">Expiration Date</span>
+    </div>
+    <div class="col-auto">
+        <input type="date" class="form-control" id="expirationDate">
+    </div>
+    &emsp;&emsp;
+    <button data-toggle="collapse" onclick="search_option_ticker()" class="btn btn-primary">Get Strike Prices</button>
+</div>
+
+<div class="container">
+    <p class="fs-10 fst-italic">* Strike Width.<a href="https://www.investopedia.com/terms/s/strikeprice.asp" target="_blank">More</a></p>
+</div>
+
+<div class="container">
+    <p class="fs-10 fst-italic" id="tickerLastPrice">Last Prices of Ticker:</p>
+</div>
+
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Position</th>
+        <th scope="col">Strike</th>
+        <th scope="col">BS Price</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr id="optionTable" style="display:none;">
+            <td>...</td>
+            <td>...</td>
+            <td>...</td>
+            <td>...</td>
+        </tr>
+    </tbody>
+</table>
+
+<script>
+    function search_option_ticker(){
+        var ticker = $('#TickerListInput option:selected').val();
+        var expirationDate = document.getElementById("expirationDate").value;
+        $.ajax({
+            type: 'post',
+            headers: { "X-CSRFToken": '{{csrf_token}}' },
+            data: {'ticker': ticker, 'expirationDate': expirationDate ,'getStrikePrice': true},
+        }).done(function(result) {
+            console.log(result['putCallList'])
+            tickerLastPrice = result['putCallList'][0][0]
+            $("#tickerLastPrice")[0].innerText = "Last Prices of Ticker: " + tickerLastPrice;
+            var $elem = $("#optionTable")
+            // call prices
+            remove_option_table()
+            for (var i=0; i<result['putCallList'][2].length;i++){
+                $clone = $elem.clone( true )
+                $clone[0].style = ""
+                $clone[0].id = "optionTableNew"
+                $clone.find("td")[0].innerText = i + 1
+                $clone.find("td")[1].innerText = "Call"
+                $clone.find("td")[2].innerText = result['putCallList'][2][i]
+                $clone.find("td")[3].innerText = result['putCallList'][3][i]
+                $clone.insertAfter("table tbody tr:last")
+            }
+
+            // put prices
+            for (var i=0; i<result['putCallList'][1].length;i++){
+                $clone = $elem.clone( true )
+                $clone[0].style = ""
+                $clone[0].id = "optionTableNew"
+                $clone.find("td")[0].innerText = i + 1
+                $clone.find("td")[1].innerText = "Put"
+                $clone.find("td")[2].innerText = result['putCallList'][1][i]
+                $clone.find("td")[3].innerText = result['putCallList'][3][i]
+                $clone.insertAfter("table tbody tr:last")
+            }
+        });
+    }
+
+    function remove_option_table(){
+        for (var i=0; i<6;i++){
+            $("#optionTableNew").remove()
+        }
+    }
+</script>
+
+{% endblock content %}

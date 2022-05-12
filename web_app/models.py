@@ -1,10 +1,18 @@
 from web_app.algo_model import riskModel, ticker
-from .algo_model import *
+from .algo_model import importData, graphData, priceModel
+from datetime import date, timedelta, datetime
 from .mongoDB import mongoDB
 from .message import message
 import pandas as pd
 # Create your models here.
 
+def get_prices_interval(prices):
+    if int(prices) <= 25:
+        return 2.5
+    elif int(prices) <= 200:
+        return 5
+    else:
+        return 10
 
 class Model:
 
@@ -20,6 +28,7 @@ class Model:
         self.ticker = None
         self.graph = None
         self.riskModel = None
+        self.priceModel = None
         self.email = message.Email()
     
     def get_db(self):
@@ -46,6 +55,62 @@ class Model:
             currTicker = ['Database List'] + ['------------'] + currTicker
         result = currTicker + ['------------'] + ['S&P 500 List'] + ['------------'] + allTicker
         return result
+
+    def get_option_prices(self, tickerName, expirationDate):
+        # get the last business day as well as the date bfore the last biz date
+        # will run the code of the strike price based on the last biz date
+        t = ticker.Ticker(tickerName)
+        format = "%Y-%m-%d"
+        # get the day of last date
+        lastBizDay = datetime.now() - timedelta(days = 1)
+        shift = timedelta(max(1,(lastBizDay.weekday() + 6) % 7 - 3))
+        lastBizDay = lastBizDay - shift
+        # get a whole years of data
+        pDateBeforeLastBizDate = lastBizDay - timedelta(days = 360)
+        lastBizDay = lastBizDay.strftime(format)
+        pDateBeforeLastBizDate = pDateBeforeLastBizDate.strftime(format)
+
+        print("lastBizDay:%s, pDateBeforeLastBizDate:%s" % (lastBizDay, pDateBeforeLastBizDate))
+        if self.DB.find_ticker_from_db(tickerName):
+            data = self.DB.find_data_from_db(tickerName)
+            df = pd.DataFrame(list(data))
+            t.add_data_from_database(df)
+            t.set_data_range(pDateBeforeLastBizDate, lastBizDay)
+        else:
+            t.import_data_range(pDateBeforeLastBizDate, lastBizDay)
+            self.DB.insert_to_db(t)
+        # t.import_data_range(pDateBeforeLastBizDate, lastBizDay)
+        volatility = t.get_vol_from_data()
+
+        # print(volatility)
+        dateDiff = (datetime.strptime(expirationDate, format) - datetime.strptime(lastBizDay, format)).days / 365
+        lastClosePrice = t.get_last_close_data()
+        self.priceModel = priceModel.OptionModel(t)
+
+        priceInterval = get_prices_interval(lastClosePrice)
+        # put strike list
+        putList = [int(lastClosePrice)-n*priceInterval for n in range(1, 4)]
+        callList = [int(lastClosePrice)+n*priceInterval for n in range(1, 4)]         
+
+        # the option model from the price model class
+        putOptionList, callOptionList = [], []
+
+        for put in putList:
+            
+            self.priceModel.set_base(lastClosePrice, put, dateDiff, volatility)
+            self.priceModel.black_scholes_put(lastClosePrice, put, dateDiff, volatility)
+            putPrice = "{:.2f}".format(self.priceModel.get_price())
+            putOptionList.append(putPrice)
+            # print('strike @ %s, BS put @%s' % (put, putPrice))
+        
+        for call in callList:
+            self.priceModel.set_base(lastClosePrice, call, dateDiff, volatility)
+            self.priceModel.black_scholes_call(lastClosePrice, call, dateDiff, volatility)
+            callPrice = "{:.2f}".format(self.priceModel.get_price())
+            callOptionList.append(callPrice)
+            # print('strike @ %s, BS put @%s' % (put, callPrice))
+
+        return [[lastClosePrice], putList, callList, putOptionList, callOptionList]
 
     # This will print the baisc graph as pic into the web page.
     def run_base_graph(self, tickerName, startDate, endDate, chartType='line'):

@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from matplotlib.style import context
 from .models import Model
+from datetime import date, timedelta
 
 MODEL = Model()
 
@@ -50,3 +51,22 @@ def tradeModel(request):
             return JsonResponse(context)           
 
     return render(request, 'web_app/tradeModel.html')
+
+def optionModel(request):
+    if request.method == 'GET':
+        ticker = MODEL.get_all_ticker_from_db()
+        context = {
+            'ticker': ticker
+        }
+        return render(request, 'web_app/optionModel.html', context)
+    if request.method == 'POST':
+        if 'getStrikePrice' in request.POST:
+            ticker = request.POST['ticker']
+            expirationDate = request.POST['expirationDate']
+            expirationDate = date.today().strftime("%Y-%m-%d") if request.POST['expirationDate'] == '' else request.POST['expirationDate']
+            putCallList = MODEL.get_option_prices(ticker, expirationDate)
+            context = {
+                'putCallList': putCallList
+            }
+            return JsonResponse(context)    
+    return render(request, 'web_app/optionModel.html')

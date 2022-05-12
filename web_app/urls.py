@@ -11,6 +11,7 @@ urlpatterns = [
     path('about/', views.about, name='web_app_about'),
     path('message/', views.message, name='web_app_message'),
     path('trade_model/', views.tradeModel, name='web_app_trade_model'),
+    path('option_model/', views.optionModel, name='web_app_option_model'),
 ]
 
 # if settings.DEBUG:

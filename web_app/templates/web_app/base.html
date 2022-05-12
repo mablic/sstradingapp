@@ -21,11 +21,15 @@
         #navigation {
             font-size: x-large; 
         }
-        #footer {
-            /* position:absolute; */
-            bottom:0;
-            width:100%;
-            height:100px;   
+        .fixed-bottom {
+            position: fixed;
+            margin: auto;
+            height: 100px;
+            width: 100%;
+            right: 0;
+            bottom: 50px;
+            left: 0;
+            z-index: 1030;
         }
     </style>
 
@@ -49,8 +53,8 @@
         {% block content %}{% endblock %}
     </div>
 
-    <div class="container">
-        <footer id="footer" class="footer text-center">
+    <div class="container text-center fixed-bottom">
+        <footer>
             <div class="row">
                 <!-- Footer Location -->
                 <div class="col-lg-4 mb-5 mb-lg-0">
@@ -77,6 +81,7 @@
             </div>
         </footer>
     </div>
+
     
     <!-- Optional JavaScript; choose one of the two! -->
 
