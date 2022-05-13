@@ -2,7 +2,7 @@
 
 https://sstradingapp.herokuapp.com/
 
-## About this Model**
+## About this Model
 
 **Description**
 
@@ -24,7 +24,7 @@ A web base application that help visualize the stock ticker movement with custom
  - Value at Risk engine with user-defined S&P 500 tickers' portfolio
  - Option model with the Black-Scholes engine
 
-## Development phase (current Beta v0.3)** 
+## Development phase (current Beta v0.3)
 
  - Beta v0.1:
     - Production release for the Beta model with the ability to Graph S&P 500 ticker
@@ -41,7 +41,7 @@ A web base application that help visualize the stock ticker movement with custom
     - Option model with the European the Black-Scholes engine
     - New module to pull the 10 years T bond from the Yahoo Finance
 
-## Authors**
+## Authors
 Mai He [https://github.com/mablic/]
 ## Acknowledgments
 N/A
