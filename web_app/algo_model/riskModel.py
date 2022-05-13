@@ -66,7 +66,7 @@ class RiskModel:
         variance = np.array(self.__pos).dot(cov).dot(np.array(self.__pos).T)
         # print(variance)
         for c in ConfidentLevel:
-            varList.append(math.sqrt(variance) * c.value * -1)
+            varList.append("{:.2f}".format(math.sqrt(variance) * c.value * -1))
         return varList
 
     #   monte carlos simulation
