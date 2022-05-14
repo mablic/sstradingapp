@@ -21,38 +21,40 @@
         #navigation {
             font-size: x-large; 
         }
+        .fixed-body {
+            margin-bottom: 200px;
+        }
         .fixed-bottom {
             position: fixed;
             margin: auto;
             height: 100px;
             width: 100%;
-            right: 0;
-            bottom: 80px;
-            left: 0;
-            z-index: 1030;
+            bottom: 0px;
+            background-color: white;
         }
     </style>
 
 </head>
 <body>
-    <div class="container">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <ul id='navigation' class="nav nav-pills ">
-                <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{% url 'main:web_app_home' %}">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'main:web_app_about' %}">About</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
+    <div class="fixed-body">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <ul id='navigation' class="nav nav-pills ">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="{% url 'main:web_app_home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:web_app_about' %}">About</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
 
-    <div class="container">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        {% block content %}{% endblock %}
+        <div class="container">
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            {% block content %}{% endblock %}
+        </div>
     </div>
-
     <div class="container text-center fixed-bottom">
         <footer>
             <div class="row">

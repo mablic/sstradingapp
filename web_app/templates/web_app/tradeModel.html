@@ -181,7 +181,7 @@
                 headers: { "X-CSRFToken": '{{csrf_token}}' },
                 data: {'ticker': ticker, 'startDate': startDate, 'endDate': endDate, 'chartType': chartType},
             }).done(function(result) {
-                reloading()
+                // reloading()
             });
         };
         function get_var_value(){

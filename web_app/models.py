@@ -70,7 +70,7 @@ class Model:
         lastBizDay = lastBizDay.strftime(format)
         pDateBeforeLastBizDate = pDateBeforeLastBizDate.strftime(format)
 
-        print("lastBizDay:%s, pDateBeforeLastBizDate:%s" % (lastBizDay, pDateBeforeLastBizDate))
+        # print("lastBizDay:%s, pDateBeforeLastBizDate:%s" % (lastBizDay, pDateBeforeLastBizDate))
         if self.DB.find_ticker_from_db(tickerName):
             data = self.DB.find_data_from_db(tickerName)
             df = pd.DataFrame(list(data))
@@ -89,8 +89,8 @@ class Model:
 
         priceInterval = get_prices_interval(lastClosePrice)
         # put strike list
-        putList = [int(lastClosePrice)-n*priceInterval for n in range(1, 4)]
-        callList = [int(lastClosePrice)+n*priceInterval for n in range(1, 4)]         
+        putList = [int(lastClosePrice)-n*priceInterval for n in range(1, 8)]
+        callList = [int(lastClosePrice)+n*priceInterval for n in range(1, 8)]         
 
         # the option model from the price model class
         putOptionList, callOptionList = [], []
